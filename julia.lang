@@ -1,0 +1,190 @@
+<!--
+    Install this file by copying to /usr/share/gtksourceview-*.*/language-specs
+-->
+<language id="julia" _name="Julia" version="2.0" _section="Sources">
+
+    <metadata>
+        <property name="mimetypes">text/x-julia-source</property>
+        <property name="globs">*.jl</property>
+        <property name="line-comment-start">%;#</property>
+    </metadata>
+
+    <styles>
+        <style id="comment"           _name="Comment"               map-to="def:comment"/>
+        <!--style id="identifier"        _name="Identifier"            map-to="def:identifier"/-->
+        <style id="keyword"           _name="Keyword"               map-to="def:keyword"/>
+        <style id="string"            _name="String"                map-to="def:string"/>
+        <style id="char"              _name="Character"             map-to="def:character"/>
+        <!--style id="escaped-character" _name="Escaped Character"     map-to="def:special-char"/-->
+        <!--style id="type"              _name="Type"                  map-to="def:type"/-->
+        <!--style id="boolean"           _name="Boolean value"         map-to="def:boolean"/-->
+        <!--style id="operator"          _name="Operator"              map-to="def:operator"/-->
+        <style id="symbol"            _name="Symbol"                map-to="def:operator"/>
+    </styles>
+
+    <definitions>
+
+        <define-regex id="hex_digit" extended="true">
+            [0-9a-fA-F]
+        </define-regex>
+
+        <define-regex id="common_escape" extended="true">
+              \\
+            | n | r | t
+            | (x \%{hex_digit}{2})
+            | (u \%{hex_digit}{4})
+            | (U \%{hex_digit}{8})
+        </define-regex>
+
+        <define-regex id="char_escape" extended="true">
+            (?P&lt;char_escape&gt;
+                \\( ' | \%{common_escape} ))
+        </define-regex>
+        
+        <define-regex id="char" extended="true">
+            '( [^'\\] | \%{char_escape} )'
+        </define-regex>
+
+        <define-regex id="string_escape" extended="true">
+            \\( " | \%{common_escape} )
+        </define-regex>
+
+        <define-regex id="int_suffix" extended="true">
+              u (8|16|32|64)?
+            | i (8|16|32|64)
+        </define-regex>
+
+        <define-regex id="exponent" extended="true">
+            [Ee] [-+]? [\d_]+
+        </define-regex>
+
+        <define-regex id="float_suffix" extended="true">
+          ( \%{exponent} | \.[\d_]+\%{exponent}? ) (f(32|64))?
+        </define-regex>
+
+        <define-regex id="num_suffix" extended="true">
+            \%{int_suffix} | \%{float_suffix}
+        </define-regex>
+
+        <define-regex id="number" extended="true">
+            ([1-9] [\d|_]*              \%{num_suffix}?)
+            | 0 ( (b [10_]+             \%{int_suffix}?)
+                | (x (\%{hex_digit}|_)+ \%{int_suffix}?)
+                | ([\d|_]*              \%{num_suffix}?) )
+        </define-regex>
+
+        <define-regex id="binop" extended="true">
+              \+
+            | \-
+            | \*
+            | \/
+            | \%
+            | ^
+            | &amp;
+            | \|
+            | &lt;&lt;
+            | &gt;&gt;
+            | &gt;&gt;&gt;
+        </define-regex>
+
+        <define-regex id="operator" extended="true">
+              =
+            | &lt; | &lt;=
+            | ==   | !=
+            | &gt; | &gt;=
+            | !
+            | ~
+            | \|\| | &amp;&amp;
+            | \%{binop} =?
+        </define-regex>
+
+        <define-regex id="symbol" extended="true">
+              @
+            | \.
+            | \.\.\.
+            | ,
+            | ;
+            | :
+            | ::
+            | \?
+            | -&gt; | &lt;- | &lt;-&gt;
+            | \( | \)
+            | \[ | \]
+            | \{ | \}
+            | # | #\{ | #&lt;
+        </define-regex>
+
+        <define-regex id="type" extended="true">
+            \b( Int8 | Int16 | Int32 | Int64
+              | Uint8 | Uint16 | Uint32 | Uint64
+              | Float32 | Float64
+              | Complex64 | Complex128
+              | Any | Char | Bool | String )\b
+        </define-regex>
+
+        <define-regex id="keyword" extended="true">
+            \b( abstract | begin | bitstype | break | catch | ccall
+              | const | continue | else | elseif | end
+              | export | for | function | global | if 
+              | import | let | local | macro | module | quote
+              | return | try | type | typealias | while )\b
+        </define-regex>
+
+        <context id="julia">
+            <include>
+
+                <context id="line-comment" end-at-line-end="true" style-ref="comment">
+                    <start>#</start>
+                    <include>
+                        <context ref="def:in-comment:*"/>
+                    </include>
+                </context>
+
+                <context id="char" style-ref="char">
+                    <match>\%{char}</match>
+                    <include>
+                        <context sub-pattern="char_escape" style-ref="escaped-character"/>
+                    </include>
+                </context>
+
+                <context id="string" style-ref="string">
+                    <start>"</start>
+                    <end>"</end>
+                    <include>
+                        <context style-ref="escaped-character">
+                            <match>\%{string_escape}</match>
+                        </context>
+                    </include>
+                </context>
+
+                <context id="keyword" style-ref="keyword">
+                    <match>\%{keyword}</match>
+                </context>
+
+                <context id="type" style-ref="type">
+                    <match>\%{type}</match>
+                </context>
+
+                <context id="boolean" style-ref="boolean">
+                    <match>\b(true|false)\b</match>
+                </context>
+
+                <context id="identifier" style-ref="identifier">
+                    <match>\b(\w+)\b</match>
+                </context>
+
+                <context id="operator" style-ref="operator">
+                    <match>\%{operator}</match>
+                </context>
+
+                <context id="symbol" style-ref="symbol">
+                    <match>\%{symbol}</match>
+                </context>
+
+            </include>
+        </context>
+
+    </definitions>
+
+</language>
+

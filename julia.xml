@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Install this file by copying to /usr/share/mime/packages and
+    then running update-mime-database /usr/share/mime
+-->
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+
+    <mime-type type="text/x-julia-source">
+        <sub-class-of type="text/plain"/>
+        <comment>Julia source code</comment>
+        <glob pattern="*.rs"/>
+    </mime-type>
+
+</mime-info>
+
