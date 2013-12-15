@@ -6,7 +6,7 @@
     <metadata>
         <property name="mimetypes">text/x-julia-source</property>
         <property name="globs">*.jl</property>
-        <property name="line-comment-start">%;#</property>
+        <property name="line-comment-start">#</property>
     </metadata>
 
     <styles>
